@@ -43,8 +43,6 @@ public class CreateTests {
     @UseDataProvider("bearProvider")
     public void CreateTest (String type, String name, double age, int expectedResponse)
     {
-        RestAssured.baseURI = "http://localhost/bear";
-        RestAssured.port=8091;
         RequestSpecification httprequest = RestAssured.given();
 
         /*Создаем JSON для создания медведя*/
