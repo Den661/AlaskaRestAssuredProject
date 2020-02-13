@@ -1,25 +1,20 @@
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import io.restassured.RestAssured;
-import io.restassured.http.Method;
+
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.json.JSONObject;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
+import static io.restassured.http.Method.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-
-@RunWith(DataProviderRunner.class)
-
 public class CreateTests {
 
-    @DataProvider
-    public static Object[][] bearProvider()
+    @DataProvider (name = "bearProvider")
+    public static Object[][] dataProviderMethod()
     {
         return new Object[][] {
                 {"BROWN","ИСААК",15.5,200},
@@ -33,14 +28,13 @@ public class CreateTests {
         };
     }
 
-    @Before
+    @BeforeMethod
     public void setUp(){
         RestAssured.baseURI = "http://localhost/bear";
         RestAssured.port=8091;
     }
 
-    @Test
-    @UseDataProvider("bearProvider")
+    @Test (dataProvider = "bearProvider")
     public void CreateTest (String type, String name, double age, int expectedResponse)
     {
         RequestSpecification httprequest = RestAssured.given();
@@ -54,12 +48,12 @@ public class CreateTests {
         /*Отправляем запрос на создание и вытаскиваем полученный ID*/
         httprequest.header("Content-Type","application/JSON");
         httprequest.body(requestBody.toString());
-        Response response = httprequest.request(Method.POST);
+        Response response = httprequest.request(POST);
         assertThat(response.getStatusCode(),equalTo(expectedResponse));
         String bearId = response.getBody().asString();
 
         /*Получаем данные по Id созданного медведя*/
-        Response getResponse = httprequest.request(Method.GET,"/"+bearId);
+        Response getResponse = httprequest.request(GET,"/"+bearId);
         String responseBody = getResponse.getBody().asString();
 
         /*Проверяем что вернулось то, что отправили*/
