@@ -8,7 +8,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import static io.restassured.http.Method.*;
-import static java.util.Map.of;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -20,38 +19,36 @@ public class UpdateTests extends BaseTest {
     @DataProvider
     public static Object[][] bearProvider() {
         return new Object[][]{
-                {"BLACK", 1d, "UPDATEMEIFYOUCAN"},
-                {"BROWN", 1d, "YOUDIDIT"},
-                {"BROWN", 17d, "UPDATEMEIFYOUCAN"}
+                {new Bear("BLACK", "UPDATEMEIFYOUCAN", 1D)},
+                {new Bear("BROWN", "YOUDIDIT", 1D)},
+                {new Bear("BROWN", "UPDATEMEIFYOUCAN", 17d)}
         };
     }
 
     /*Создаем медведя для теста*/
     @BeforeMethod
     public void createBear() {
-        JSONObject requestBody = new JSONObject(of("bear_type", "BROWN", "bear_age", "1", "bear_name", "UPDATEMEIFYOUCAN"));
-        httprequest.body(requestBody.toString());
-
-        response = httprequest.request(POST);
+        Bear bear = new Bear("BROWN", "UPDATEMEIFYOUCAN", 1D);
+        JSONObject requestBody = new JSONObject(new Gson().toJson(bear));
+        httpRequest.body(requestBody.toString());
+        response = httpRequest.request(POST);
         id = response.getBody().asString();
     }
 
 
     @Test(dataProvider = "bearProvider")
-    public void updateTest(String type, double age, String name) {
-        JSONObject requestBody = new JSONObject(of("bear_type", type, "bear_age", age, "bear_name", name));
-        httprequest.body(requestBody.toString());
+    public void updateTest(Bear bear) {
+        JSONObject requestBody = new JSONObject(new Gson().toJson(bear));
+        httpRequest.body(requestBody.toString());
+        response = httpRequest.request(PUT, "/" + id);
+        assertThat("Проверяем statuscode", response.getStatusCode(), equalTo(200));
+        assertThat("Проверяем body", response.getBody().asString(), equalTo("OK"));
 
-        response = httprequest.request(PUT, "/" + id);
-        assertThat(response.getStatusCode(), equalTo(200));
-        assertThat(response.getBody().asString(), equalTo("OK"));
-
-        response = httprequest.request(GET, "/" + id);
+        response = httpRequest.request(GET, "/" + id);
         Bear responseObject = new Gson().fromJson(response.getBody().asString(), Bear.class);
 
-        assertThat("Проверяем имя", responseObject.getName(), is(name));
-        assertThat("Проверяем возраст", responseObject.getAge(), is(age));
-        assertThat("Проверяем тип", responseObject.getType(), is(type));
-
+        assertThat("Проверяем имя", responseObject.getName(), is(bear.getName()));
+        assertThat("Проверяем возраст", responseObject.getAge(), is(bear.getAge()));
+        assertThat("Проверяем тип", responseObject.getType(), is(bear.getType()));
     }
 }

@@ -30,4 +30,10 @@ public class Bear {
     public String getId() {
         return id;
     }
+
+    public Bear(String type, String name, Double age) {
+        this.type = type;
+        this.name = name;
+        this.age = age;
+    }
 }
