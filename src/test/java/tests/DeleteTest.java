@@ -35,7 +35,7 @@ public class DeleteTest extends BaseTest {
         assertThat("Проверяем что медведь удален", response.getBody().asString(), is("EMPTY"));
     }
 
-    @Test()
+    @Test
     public void deleteAllBears() {
         createSomeBears();
         response = httpRequest.request(DELETE);
