@@ -41,7 +41,7 @@ public class CreateTests extends BaseTest {
         response = httpRequest.request(GET, "/" + bearId);
         Bear responseBody = new Gson().fromJson(response.getBody().asString(), Bear.class);
 
-        assertThat("Проверяем statuscode", response.getStatusCode(), equalTo(200));
+        assertThat("Проверяем statusCode", response.getStatusCode(), equalTo(200));
         assertThat("Проверяем сохраненный возраст", responseBody.getAge(), is(bear.getAge()));
         assertThat("Проверяем сохраненное имя", responseBody.getName(), is(bear.getName()));
         assertThat("Проверяем сохраненный тип", responseBody.getType(), is(bear.getType()));

@@ -41,7 +41,7 @@ public class UpdateTests extends BaseTest {
         JSONObject requestBody = new JSONObject(new Gson().toJson(bear));
         httpRequest.body(requestBody.toString());
         response = httpRequest.request(PUT, "/" + id);
-        assertThat("Проверяем statuscode", response.getStatusCode(), equalTo(200));
+        assertThat("Проверяем statusCode", response.getStatusCode(), equalTo(200));
         assertThat("Проверяем body", response.getBody().asString(), equalTo("OK"));
 
         response = httpRequest.request(GET, "/" + id);
@@ -50,5 +50,14 @@ public class UpdateTests extends BaseTest {
         assertThat("Проверяем имя", responseObject.getName(), is(bear.getName()));
         assertThat("Проверяем возраст", responseObject.getAge(), is(bear.getAge()));
         assertThat("Проверяем тип", responseObject.getType(), is(bear.getType()));
+    }
+
+    @Test
+    public void updateWhichNotExist(){
+        Bear bear = new Bear("BROWN", "DOESNTMETTER", 2D);
+        JSONObject requestBody = new JSONObject(new Gson().toJson(bear));
+        response = httpRequest.request(PUT,"/"+id+1);
+
+        assertThat("Проверяем statusCode",response.getStatusCode(),is(404));
     }
 }

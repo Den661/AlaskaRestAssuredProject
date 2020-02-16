@@ -28,7 +28,7 @@ public class DeleteTest extends BaseTest {
     @Test
     public void deleteBear() {
         response = httpRequest.request(DELETE, "/" + id);
-        assertThat("Проверяем статус код", response.getStatusCode(), is(200));
+        assertThat("Проверяем statusCode", response.getStatusCode(), is(200));
 
         // TODO: 16.02.2020 Пока проверяем на EMPTY потом переделать на 404
         response = httpRequest.request(GET, "/" + id);
@@ -48,7 +48,7 @@ public class DeleteTest extends BaseTest {
     public void deleteBearWhichNotExist() {
         response = httpRequest.request(DELETE, "/" + id + 1);
 
-        assertThat("Проверяем статус код", response.getStatusCode(), is(404));
+        assertThat("Проверяем statusCode", response.getStatusCode(), is(404));
     }
 
     private void createSomeBears() {
